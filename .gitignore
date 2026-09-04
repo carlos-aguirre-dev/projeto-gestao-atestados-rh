@@ -1,0 +1,26 @@
+# Ambiente Virtual do Python
+venv/
+env/
+.venv/
+
+# Banco de Dados Local (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Pasta de fotos/uploads recebidas do scanner
+uploads/*
+!uploads/.gitkeep
+
+# Arquivos temporários gerados pelo Python
+__pycache__/
+*.pyc
+
+# Arquivos Excel exportados nos testes
+*.xlsx
+
+# Configurações do editor e do sistema
+.vscode/
+.idea/
+.env
+.DS_Store
