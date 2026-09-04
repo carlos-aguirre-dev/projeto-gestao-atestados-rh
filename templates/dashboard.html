@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Painel Executivo de Absenteísmo</h2>
+            <p class="text-xs text-gray-500">Métricas consolidadas do Power BI Service em tempo real.</p>
+        </div>
+    </div>
+
+    <!-- Container do Power BI Embedded -->
+    <div class="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" style="height: 80vh;">
+        <iframe 
+            title="Dashboard_Atestados" 
+            class="w-full h-full border-0"
+            src="https://app.powerbi.com/reportEmbed?reportId=SEU_REPORT_ID_AQUI" 
+            allowFullScreen="true">
+        </iframe>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+    <!-- Formulário de Filtros e Exportação Excel -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Exportação Relatórios Excel (RF14)</h2>
+        
+        <form action="/exportar-excel" method="POST" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Loja</label>
+                <select name="loja" class="w-full border rounded-md p-2 text-sm border-gray-300">
+                    <option value="TODAS">Todas as Lojas</option>
+                    <option value="Loja 01 - Centro">Loja 01 - Centro</option>
+                    <option value="Loja 02 - Shopping">Loja 02 - Shopping</option>
+                    <option value="Matriz - Depósito">Matriz - Depósito</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Setor</label>
+                <select name="setor" class="w-full border rounded-md p-2 text-sm border-gray-300">
+                    <option value="TODOS">Todos os Setores</option>
+                    <option value="Vendas">Vendas</option>
+                    <option value="Caixa">Caixa</option>
+                    <option value="Logística">Logística</option>
+                    <option value="Administrativo">Administrativo</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Data Início</label>
+                <input type="date" name="data_inicio" class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Data Fim</label>
+                <input type="date" name="data_fim" class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-excel"></i> Exportar (.xlsx)
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabela Histórico de Registros -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Atestados Cadastrados</h3>
+        
+        <table class="w-full text-left text-sm border-collapse">
+            <thead>
+                <tr class="bg-slate-100 border-b border-gray-200 text-slate-700">
+                    <th class="p-3">ID</th>
+                    <th class="p-3">Colaborador</th>
+                    <th class="p-3">Loja/Setor</th>
+                    <th class="p-3">Médico (CRM)</th>
+                    <th class="p-3">CID-10</th>
+                    <th class="p-3 text-center">Dias</th>
+                    <th class="p-3">Data Registro</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for item in registros %}
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-semibold">#{{ item.id }}</td>
+                    <td class="p-3 font-medium text-slate-800">{{ item.colaborador }}</td>
+                    <td class="p-3 text-xs text-slate-500">{{ item.loja }} <br><span class="text-blue-600 font-semibold">{{ item.setor }}</span></td>
+                    <td class="p-3">{{ item.medico }} <br><span class="text-xs text-slate-400">{{ item.crm }}</span></td>
+                    <td class="p-3"><span class="bg-blue-100 text-blue-800 font-bold px-2 py-1 rounded text-xs">{{ item.cid }}</span></td>
+                    <td class="p-3 text-center font-bold text-red-600">{{ item.dias_afastamento }}d</td>
+                    <td class="p-3 text-xs text-slate-400">{{ item.data_registro.strftime('%d/%m/%Y %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="p-6 text-center text-slate-400">Nenhum atestado cadastrado até o momento.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
