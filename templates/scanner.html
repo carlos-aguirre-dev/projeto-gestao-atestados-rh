@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Capturar ou Enviar Atestado</h2>
+        <p class="text-sm text-gray-500 mb-4">Tire uma foto ou faça upload do documento para acionar a extração via OCR.</p>
+
+        <form id="uploadForm" class="flex flex-col md:flex-row gap-4 items-center">
+            <input type="file" id="fileInput" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
+            <button type="submit" id="btnProcessar" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-semibold text-sm transition">
+                Processar OCR
+            </button>
+        </form>
+    </div>
+
+    <!-- Formulário de Validação Manual / Pós-OCR -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Dados Extraídos (Conferência do RH)</h3>
+        
+        <form action="/salvar-atestado" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="hidden" name="caminho_imagem" id="caminho_imagem">
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Colaborador</label>
+                <input type="text" name="colaborador" id="colaborador" required class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Loja / Unidade</label>
+                <select name="loja" required class="w-full border rounded-md p-2 text-sm border-gray-300">
+                    <option value="Loja 01 - Centro">Loja 01 - Centro</option>
+                    <option value="Loja 02 - Shopping">Loja 02 - Shopping</option>
+                    <option value="Matriz - Depósito">Matriz - Depósito</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Setor</label>
+                <select name="setor" required class="w-full border rounded-md p-2 text-sm border-gray-300">
+                    <option value="Vendas">Vendas</option>
+                    <option value="Caixa">Caixa</option>
+                    <option value="Logística">Logística</option>
+                    <option value="Administrativo">Administrativo</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Médico Emitente</label>
+                <input type="text" name="medico" id="medico" class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">CRM e UF</label>
+                <input type="text" name="crm" id="crm" class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">CID-10</label>
+                <input type="text" name="cid" id="cid" required class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">CNPJ do Hospital/Clínica</label>
+                <input type="text" name="cnpj" id="cnpj" class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Dias de Afastamento</label>
+                <input type="number" name="dias_afastamento" id="dias_afastamento" required min="1" class="w-full border rounded-md p-2 text-sm border-gray-300">
+            </div>
+
+            <div class="md:col-span-2 mt-4">
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md text-sm transition">
+                    Confirmar e Salvar Atestado
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('fileInput');
+    if (!fileInput.files[0]) return;
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    const btn = document.getElementById('btnProcessar');
+    btn.innerText = "Lendo imagem...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/processar-ocr', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        document.getElementById('medico').value = data.medico || '';
+        document.getElementById('crm').value = data.crm || '';
+        document.getElementById('cid').value = data.cid || '';
+        document.getElementById('cnpj').value = data.cnpj || '';
+        document.getElementById('dias_afastamento').value = data.dias_afastamento || 1;
+        document.getElementById('caminho_imagem').value = data.caminho_imagem || '';
+    } catch (err) {
+        alert('Erro ao processar imagem.');
+    } finally {
+        btn.innerText = "Processar OCR";
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}
